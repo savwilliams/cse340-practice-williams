@@ -1,9 +1,18 @@
+// Imports and app setup
+// In-memory data
+// Middleware configuration
+// Routes
+// Test and 404 routes
+// Global error handler
+// Dev-only WebSocket logic
+// Server startup
+
+
+//========================================================
 // Imports
 import express from 'express';
 import { fileURLToPath } from 'url';
 import path from 'path';
-
-
 
 
 /**
@@ -23,33 +32,7 @@ const app = express();
 const name = process.env.NAME; 
 
 
-/**
- * Configure Express middleware
- */
-
-// Serve static files from the public directory
-app.use(express.static(path.join(__dirname, 'public')));
-
-// Set EJS as the templating engine
-app.set('view engine', 'ejs');
-
-// Tell Express where to find your templates
-app.set('views', path.join(__dirname, 'src/views'));
-
-
-/**
- * Global template variables middleware
- * 
- * Makes common variables available to all EJS templates without having to pass
- * them individually from each route handler
- */
-app.use((req, res, next) => {
-    // Make NODE_ENV available to all templates
-    res.locals.NODE_ENV = NODE_ENV.toLowerCase() || 'production';
-    // Continue to the next middleware or route handler
-    next();
-});
-
+//========================================================
 
 // Course data - place this after imports, before routes
 const courses = {
@@ -89,6 +72,101 @@ const courses = {
 };
 
 
+//========================================================
+
+/**
+ * Configure Express middleware
+ */
+
+// Serve static files from the public directory
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Set EJS as the templating engine
+app.set('view engine', 'ejs');
+
+// Tell Express where to find your templates
+app.set('views', path.join(__dirname, 'src/views'));
+
+
+/**
+ * Global template variables middleware
+ * 
+ * Makes common variables available to all EJS templates without having to pass
+ * them individually from each route handler
+ */
+app.use((req, res, next) => {
+    // Make NODE_ENV available to all templates
+    res.locals.NODE_ENV = NODE_ENV.toLowerCase() || 'production';
+    // Continue to the next middleware or route handler
+    next();
+});
+
+
+//middleware function to log incoming requests to the console
+app.use((req, res, next) => {
+    // Skip logging for routes that start with /. (like /.well-known/)
+    if (!req.path.startsWith('/.')) {
+    }
+    next(); // Pass control to the next middleware or route
+});
+
+
+// Middleware to add global data to all templates (res.locals)
+app.use((req, res, next) => {
+    // Add current year for copyright
+    res.locals.currentYear = new Date().getFullYear();
+
+    next();
+});
+
+
+// Global middleware for time-based greeting
+app.use((req, res, next) => {
+    const currentHour = new Date().getHours();
+
+    /**
+     * Logic to set different greetings based on the current hour.
+     * Use res.locals.greeting to store the greeting message.
+     * morning (before 12), afternoon (12-17), evening (after 17)
+     */
+    if (currentHour < 12) {
+        res.locals.greeting = 'Good Morning!';
+    } 
+    else if (currentHour < 18) {
+        res.locals.greeting = 'Good Afternoon!';
+    } 
+    else {
+        res.locals.greeting = 'Good Evening!';
+    }
+
+    next();
+});
+
+
+// Global middleware for random theme selection
+app.use((req, res, next) => {
+    const themes = ['blue-theme', 'green-theme', 'red-theme'];
+
+    //Pick a random theme from the array
+    const randomTheme = // Your random selection logic here
+        themes[Math.floor(Math.random() * themes.length)];
+
+    // Store the selected theme in res.locals for access in templates         
+    res.locals.bodyClass = randomTheme;
+
+    next();
+});
+
+
+// Global middleware to share query parameters with templates
+app.use((req, res, next) => {
+    // Make req.query available to all templates for debugging and conditional rendering
+    res.locals.queryParams = req.query || {};
+
+    next();
+});
+
+//========================================================
 
 /**
  * Routes
@@ -159,6 +237,8 @@ app.get('/catalog/:courseId', (req, res, next) => {
 });
 
 
+//========================================================
+
 // Test route for 500 errors
 app.get('/test-error', (req, res, next) => {
     const err = new Error('This is a test error');
@@ -174,6 +254,8 @@ app.use((req, res, next) => {
     next(err);
 });
 
+
+//========================================================
 
 // Global error handler
 app.use((err, req, res, next) => {
@@ -204,6 +286,9 @@ app.use((err, req, res, next) => {
         }
     }
 });
+
+
+//========================================================
 
 // When in development mode, start a WebSocket server for live reloading
 if (NODE_ENV.includes('dev')) {

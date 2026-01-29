@@ -23,7 +23,7 @@
         </script>
     <% } %>    
 </head>
-<body>
+<body class="<%= bodyClass %>">
     <header>
         <nav>
             <ul>
@@ -32,5 +32,6 @@
                 <li><a href="/catalog">Course Catalog</a></li>
                 <li><a href="/products">Products</a></li>
             </ul>
+            <%- greeting %> 
         </nav>
     </header>
