@@ -237,6 +237,26 @@ app.get('/catalog/:courseId', (req, res, next) => {
 });
 
 
+// Route-specific middleware that sets custom headers
+const addDemoHeaders = (req, res, next) => {
+    // Your task: Set custom headers using res.setHeader()
+    // Add a header called 'X-Demo-Page' with value 'true'
+    // Add a header called 'X-Middleware-Demo' with any message you want
+
+    res.setHeader('X-Demo-Page', 'true');
+    res.setHeader('X-Middleware-Demo', 'This is a demo header set by middleware');
+
+    next();
+};
+
+
+// Demo page route with header middleware
+app.get('/demo', addDemoHeaders, (req, res) => {
+    res.render('demo', {
+        title: 'Middleware Demo Page'
+    });
+});
+
 //========================================================
 
 // Test route for 500 errors
