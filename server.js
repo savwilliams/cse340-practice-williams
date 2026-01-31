@@ -84,7 +84,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 // Set EJS as the templating engine
 app.set('view engine', 'ejs');
 
-// Tell Express where to find your templates
+// Tell Express where to find templates
 app.set('views', path.join(__dirname, 'src/views'));
 
 
@@ -181,12 +181,6 @@ app.get('/about', (req, res) => {
     res.render('about', { title });
 });
 
-app.get('/products', (req, res) => {
-    const title = 'Our Products';
-    res.render('products', { title });
-});
-
-
 // Course catalog list page
 app.get('/catalog', (req, res) => {
     res.render('catalog', {
@@ -239,12 +233,10 @@ app.get('/catalog/:courseId', (req, res, next) => {
 
 // Route-specific middleware that sets custom headers
 const addDemoHeaders = (req, res, next) => {
-    // Your task: Set custom headers using res.setHeader()
-    // Add a header called 'X-Demo-Page' with value 'true'
-    // Add a header called 'X-Middleware-Demo' with any message you want
+    // Set custom headers using res.setHeader()
 
     res.setHeader('X-Demo-Page', 'true');
-    res.setHeader('X-Middleware-Demo', 'This is a demo header set by middleware');
+    res.setHeader('X-Middleware-Demo', 'This is a demo header set by middleware!');
 
     next();
 };
@@ -293,7 +285,7 @@ app.use((err, req, res, next) => {
         title: status === 404 ? 'Page Not Found' : 'Server Error',
         error: NODE_ENV === 'production' ? 'An error occurred' : err.message,
         stack: NODE_ENV === 'production' ? null : err.stack,
-        NODE_ENV // Our WebSocket check needs this and its convenient to pass along
+        NODE_ENV // The WebSocket check needs this and its convenient to pass along
     };
 
     // Render the appropriate error template with fallback
