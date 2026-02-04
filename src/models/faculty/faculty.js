@@ -76,10 +76,16 @@ const faculty = {
 
 const getFacultyById = (facultyId) => {
     // TODO: Look up faculty member by ID, return null if not found
+    return faculty[facultyId] || null;
+
 };
 
 const getSortedFaculty = (sortBy) => {
     // TODO: Validate sortBy parameter (name, department, or title), default to 'department' if invalid
+    const validSortBy = ['name', 'department', 'title'];
+    if (!validSortBy.includes(sortBy)) {
+        sortBy = 'department';
+    }
 
     // Create an array of all faculty members
     const facultyArray = [];

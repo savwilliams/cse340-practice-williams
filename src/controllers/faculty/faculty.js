@@ -3,12 +3,14 @@ import { getFacultyById, getSortedFaculty } from '../../models/faculty/faculty.j
 
 // Route handler to render the faculty list page
 const facultyListPage = (req, res) => {
-    const faculty = getSortedFaculty(sortBy);
     const sortBy = req.query.sort || 'department';
+    const faculty = getSortedFaculty(sortBy);
 
-    res.render('faculty', {
+
+    res.render('faculty/list', {
         title: 'Faculty Catalog',
-        faculty: faculty
+        faculty: faculty,
+        currentSort: sortBy
     });
 };
 
@@ -26,10 +28,9 @@ const facultyDetailPage = (req, res, next) => {
     };
 
 
-    res.render('faculty-detail', {
+    res.render('faculty/detail', {
         title: `${facultyMember.name}`,
         faculty: facultyMember,       
-
     });
 
 };
