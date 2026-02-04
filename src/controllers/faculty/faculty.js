@@ -3,7 +3,7 @@ import { getFacultyById, getSortedFaculty } from '../../models/faculty/faculty.j
 
 // Route handler to render the faculty list page
 const facultyListPage = (req, res) => {
-    const sortBy = req.query.sort || 'department';
+    const sortBy = req.query.sort || 'name';
     const faculty = getSortedFaculty(sortBy);
 
 
